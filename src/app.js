@@ -33,7 +33,7 @@ app.use('/api', rolesRoutes);
 app.use('/api', notiRoutes);
 
 // CONEXIÓN MONGODB
-mongoose.connect(process.env.ConectionString)
+mongoose.connect("mongodb+srv://yoiner:12345@cluster0.7dedtuu.mongodb.net/?retryWrites=true&w=majority")
     .then(() => console.log("Conexión a la base de datos exitosa"))
     .catch((error) => console.log(error));
 

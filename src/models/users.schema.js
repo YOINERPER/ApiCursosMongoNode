@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema({
         type: Schema.ObjectId,
         ref: 'Roles',
         default: null
+    },
+    Cod_Ver_User:{
+        type:String,
+        default: null
     }
 })
 
