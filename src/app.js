@@ -32,6 +32,11 @@ app.use('/api', router);
 app.use('/api', rolesRoutes);
 app.use('/api', notiRoutes);
 
+// si la ruta no existe
+app.use((req, res, next)=>{
+    res.send("Page Not found")
+})
+
 // CONEXIÓN MONGODB
 mongoose.connect("mongodb+srv://yoiner:12345@cluster0.7dedtuu.mongodb.net/?retryWrites=true&w=majority")
     .then(() => console.log("Conexión a la base de datos exitosa"))

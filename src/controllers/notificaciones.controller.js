@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import notificacionesSchema from "../models/notificaciones.schema.js";
 import usersSchema from "../models/users.schema.js";
-import rolesSchema from "../models/roles.schema.js";
+import shortid from "shortid";
 
 //get all notifications
 
@@ -16,7 +16,8 @@ export const getNotify = async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({
-            message: 'something went wrong'
+            message: 'something went wrong',
+            data: -2
         })
     }
 }
@@ -24,12 +25,15 @@ export const getNotify = async (req, res) => {
 //add new notifications
 export const addNot = async (req, res) => {
     try {
-        const { Id_Not, Tip_Not, Cont_Not, fec_Cre_Not, Id_UserFK, visto } = req.body;
+        const { Tip_Not, Cont_Not, fec_Cre_Not, Id_UserFK, visto } = req.body;
         const usuario = await usersSchema.findOne({ "Id_User": Id_UserFK });
-        const { _id } = usuario;
+
+        //generamos id unico parac ada notificacion
+
+        const NewIdUser = shortid.generate();
 
         //verificamos que el id no exista
-        const verificacion = await notificacionesSchema.findOne({ "Id_Not": Id_Not })
+        const verificacion = await notificacionesSchema.findOne({ "Id_Not": NewIdUser })
 
         if (verificacion) {
             return res.status(500).json({
@@ -38,11 +42,11 @@ export const addNot = async (req, res) => {
         }
 
         const notify = {
-            Id_Not: Id_Not,
+            Id_Not: NewIdUser,
             Tip_Not: Tip_Not,
             Cont_Not: Cont_Not,
             fec_Cre_Not: fec_Cre_Not,
-            Id_UserFK: _id,
+            Id_UserFK: usuario._id,
             visto
         }
         const response = await notificacionesSchema(notify)
@@ -60,12 +64,12 @@ export const addNot = async (req, res) => {
             })
             .catch((error) => res.status(500).json({
                 message: 'something went wrong',
-                data: -1
+                data: -5
             }))
     } catch (error) {
         res.status(500).json({
             message: 'something went wrong',
-            data: -2
+            data: -6
         })
     }
 
@@ -75,3 +79,75 @@ export const addNot = async (req, res) => {
 }
 
 
+//update notifications
+export const updtNot = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const datos = req.body;
+
+
+        // verificamos que exista el id
+        const not = await notificacionesSchema.findOne({ "Id_Not": id })
+
+        if (!not) {
+            return res.status(500).json({
+                message: "notification don't exist",
+                data: -1
+            })
+        }
+
+        const newNot = {
+            Tip_Not: datos.Tip_Not || not.Tip_Not,
+            Cont_Not: datos.Cont_Not || not.Cont_Not,
+            visto: datos.visto || not.visto
+        }
+
+        await notificacionesSchema.updateOne({ "Id_Not": id }, { $set: newNot })
+            .then(() => {
+                res.status(200).json({
+                    data: 1
+                })
+            }).catch((error) => {
+                res.status(500).json({
+                    data: -12
+                })
+            })
+    } catch (error) {
+        res.status(500).json({
+            data: -6
+        })
+    }
+}
+
+//delete notification
+export const delNot = async (req, res) => {
+    const { id } = req.params;
+
+    //verificamos que el id exista
+    VerExistId(id, res)
+
+    await notificacionesSchema.deleteOne({"Id_Not": id})
+    .then(()=>res.status(200).json({
+        data: 1
+    })).catch((error)=>res.status(500).json({
+        data:-13
+    }))
+}
+
+const VerExistId = async (id, res) => {
+
+    try {
+        const existe = await notificacionesSchema.findOne({ "Id_Not": id })
+
+        if (!existe) {
+
+            return res.status(500).json({
+                data: -1
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            data: -6
+        })
+    }
+}

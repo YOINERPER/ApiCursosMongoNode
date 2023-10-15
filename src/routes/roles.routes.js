@@ -17,4 +17,5 @@ rolesRoutes.get('/rol/users/:id', rolUser)
 
 //delete rol
 rolesRoutes.delete('/rol/delete/:id', RolDelete)
+
 export default rolesRoutes

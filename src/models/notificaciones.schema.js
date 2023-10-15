@@ -2,8 +2,8 @@ import mongoose, {Schema} from "mongoose";
 
 const notiSchema = mongoose.Schema({
     Id_Not : {
-        type:Number,
-        required:true
+        type:String,
+        default: null
     },
     Tip_Not : {
         type:String,

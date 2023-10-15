@@ -25,5 +25,5 @@ router.delete('/users/delete/:id', DeleteUser)
 router.post('/users/login/verify', loginV)
 export default router;
 
-//notificaciones de un usuario
+//get user's notifications
 router.get('/users/notifications/:id', getUserNot)
