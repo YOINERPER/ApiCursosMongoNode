@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const RolSchema = mongoose.Schema({
     Id_Rol : {
@@ -8,6 +8,10 @@ const RolSchema = mongoose.Schema({
     Nom_Rol:{
         type:String,
         required: true
+    },
+    users:{
+        type:[Schema.ObjectId],
+        ref: "Usuarios"
     }
 })
 

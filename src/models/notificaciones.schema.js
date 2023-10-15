@@ -21,6 +21,10 @@ const notiSchema = mongoose.Schema({
         type: Schema.ObjectId,
         required: true,
         ref: 'Usuarios'
+    },
+    visto:{
+        type:Boolean,
+        default: false
     }
 })
 

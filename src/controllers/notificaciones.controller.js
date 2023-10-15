@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import notificacionesSchema from "../models/notificaciones.schema.js";
 import usersSchema from "../models/users.schema.js";
+import rolesSchema from "../models/roles.schema.js";
 
 //get all notifications
 
@@ -11,7 +12,7 @@ export const getNotify = async (req, res) => {
 
         res.status(200).json({
             message: 'successfully',
-            results: data
+            data: data
         })
     } catch (error) {
         res.status(500).json({
@@ -22,48 +23,55 @@ export const getNotify = async (req, res) => {
 
 //add new notifications
 export const addNot = async (req, res) => {
-    const { Id_Not, Tip_Not, Cont_Not, fec_Cre_Not, Id_UserFK } = req.body;
-    const { _id } = await usersSchema.findOne({ "Id_User": Id_UserFK });
-    
-    const notify = {
-        Id_Not: Id_Not,
-        Tip_Not: Tip_Not,
-        Cont_Not: Cont_Not,
-        fec_Cre_Not: fec_Cre_Not,
-        Id_UserFK: _id
-    }
-    const response = await notificacionesSchema(notify)
-    response.save()
-        .then((data) => res.status(200).json({
-            message: 'Added successfully',
-            data:data
-        }))
-        .catch((error) => res.status(500).json({
-            message: 'something went wrong',
-            data:-1
-        }))
-}
-
-// get notifications by user
-export const getNotUsers = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { _id } = await usersSchema.findOne({ "Id_User": id });
-        const users = await notificacionesSchema.find({ "Id_UserFK": _id }).populate('Id_UserFK').exec();
+        const { Id_Not, Tip_Not, Cont_Not, fec_Cre_Not, Id_UserFK, visto } = req.body;
+        const usuario = await usersSchema.findOne({ "Id_User": Id_UserFK });
+        const { _id } = usuario;
 
-        res.status(200).json({
-            message: 'successfully',
-            data: users
-        })
+        //verificamos que el id no exista
+        const verificacion = await notificacionesSchema.findOne({ "Id_Not": Id_Not })
+
+        if (verificacion) {
+            return res.status(500).json({
+                message: "Id is registered"
+            })
+        }
+
+        const notify = {
+            Id_Not: Id_Not,
+            Tip_Not: Tip_Not,
+            Cont_Not: Cont_Not,
+            fec_Cre_Not: fec_Cre_Not,
+            Id_UserFK: _id,
+            visto
+        }
+        const response = await notificacionesSchema(notify)
+        await response.save()
+            .then(async (data) => {
+                res.status(200).json({
+                    message: 'Added successfully',
+                    data: 1
+                });
+
+                //enviamos la notificacion a el usuario
+                const { _id } = data;
+                usuario.Not_User.push(_id);
+                usuario.save();
+            })
+            .catch((error) => res.status(500).json({
+                message: 'something went wrong',
+                data: -1
+            }))
     } catch (error) {
-        return res.status(500).json({
-            message: 'not found user',
-            data: -1
+        res.status(500).json({
+            message: 'something went wrong',
+            data: -2
         })
     }
 
 
 
 
-
 }
+
+

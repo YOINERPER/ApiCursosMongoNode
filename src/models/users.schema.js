@@ -42,6 +42,10 @@ const userSchema = mongoose.Schema({
     Cod_Ver_User:{
         type:String,
         default: null
+    },
+    Not_User: {
+        type: [Schema.ObjectId],
+        ref: 'Notificaciones_Usuarios'
     }
 })
 

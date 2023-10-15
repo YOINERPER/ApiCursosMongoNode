@@ -1,5 +1,5 @@
 import { Router } from "express"
-import {getAllUsers, AddUser, UpdateUser, DeleteUser, getUser,userTypes, loginV} from "../controllers/users.controller.js"
+import {getAllUsers, AddUser, UpdateUser, DeleteUser, getUser, loginV, getUserNot} from "../controllers/users.controller.js"
 
 const router = Router();
 
@@ -21,9 +21,9 @@ router.put('/users/update/:id', UpdateUser)
 //delete user
 router.delete('/users/delete/:id', DeleteUser)
 
-//ask user by rol
-router.get('/users/rol/:id', userTypes)
-
 //verify login
 router.post('/users/login/verify', loginV)
 export default router;
+
+//notificaciones de un usuario
+router.get('/users/notifications/:id', getUserNot)

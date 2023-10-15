@@ -1,5 +1,5 @@
 import Routes from "express"
-import {AddRol,rolUpdate, getAllRoles} from "../controllers/roles.controller.js"
+import {AddRol,rolUpdate, getAllRoles , rolUser} from "../controllers/roles.controller.js"
 
 const rolesRoutes = Routes();
 
@@ -11,6 +11,6 @@ rolesRoutes.post("/rol/add", AddRol)
 
 rolesRoutes.put('/rol/update/:id', rolUpdate)
 
-
+rolesRoutes.get('/rol/users/:id', rolUser)
 
 export default rolesRoutes
