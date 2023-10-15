@@ -3,20 +3,17 @@ import rolesSchema from "../models/roles.schema.js";
 
 export const getAllRoles = async (req, res) => {
     try{
-        await rolesSchema.find().populate('users').exec()
-        .then((data) => res.status(200).json({
+        const data = await rolesSchema.find();
+        res.status(200).json({
             message: 'Success',
-            data: data,
+            results: data,
             data: 1
-        }))
-        .catch((error) => res.status(500).json({
-            message: 'something went wrong',
-            data: -1
-        }))
+        })
     }catch(error){
         res.status(500).json({
             message: 'something went wrong',
-            data: -2
+            data: -2,
+            
         })
     }
 }
@@ -48,12 +45,20 @@ export const AddRol = async (req, res) => {
 export const rolUpdate = async (req, res) => {
     try {
         const { id } = req.params;
-        const { Id_Rol, Nom_Rol } = req.body;
-        await rolesSchema.updateOne({ "Id_Rol": id }, { $set: { Id_Rol, Nom_Rol } })
+        const datos = req.body;
+
+        const rol = await rolesSchema.findOne({"Id_Rol": id})
+        
+        const newRol = {
+            Id_Rol: datos.Id_Rol || rol.Id_Rol,
+            Nom_Rol : datos.Nom_Rol || rol.Nom_Rol
+        }
+        console.log(newRol)
+        await rolesSchema.updateOne({ "Id_Rol": id }, { $set: newRol  })
             .then((data) => res.status(200).json({
                 message: 'Rol updated successfully',
-                data: data,
-                data: 1
+                data: 1,
+               
             }))
             .catch((error) => res.status(500).json({
                 Errormessage: 'something went wrong',
@@ -84,4 +89,21 @@ export const rolUser = async (req, res) => {
 
 
 
+}
+
+export const RolDelete = async (req,res)=>{
+    try{
+        const {id} = req.params;
+        await rolesSchema.deleteOne({"Id_Rol": id});
+        res.status(200).json({
+            message: "success",
+            data: 1
+        })
+
+    }catch(error){
+        res.status(500).json({
+            message:"something went wrong",
+            data:-6
+        })
+    }
 }
