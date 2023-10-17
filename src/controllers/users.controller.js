@@ -9,12 +9,14 @@ export const getAllUsers = async (req, res) => {
     try {
         const user = await userSchema.find()
             .populate('Rol_User_Fk')
+            .populate('Id_Apr')
             .exec();
         res.status(200).json(user)
     } catch (error) {
         res.status(500).json({
             message: 'somethin went wrong',
-            data: -2
+            data: -2,
+            result: error.message
         })
     }
 

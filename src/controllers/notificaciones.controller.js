@@ -124,7 +124,19 @@ export const delNot = async (req, res) => {
     const { id } = req.params;
 
     //verificamos que el id exista
-    VerExistId(id, res)
+    const existe = await notificacionesSchema.findOne({ "Id_Not": id })
+
+    if (!existe) {
+
+        return res.status(500).json({
+            data: -1
+        })
+    }
+
+    //eliminamos los id relacionados
+    await usersSchema.updateMany({"Not_User": existe._id}, {$pull:{Not_User:existe._id}})
+   .then((data)=>console.log(data)).catch((error)=>console.log(error))
+    
 
     await notificacionesSchema.deleteOne({"Id_Not": id})
     .then(()=>res.status(200).json({
@@ -134,20 +146,3 @@ export const delNot = async (req, res) => {
     }))
 }
 
-const VerExistId = async (id, res) => {
-
-    try {
-        const existe = await notificacionesSchema.findOne({ "Id_Not": id })
-
-        if (!existe) {
-
-            return res.status(500).json({
-                data: -1
-            })
-        }
-    } catch (error) {
-        res.status(500).json({
-            data: -6
-        })
-    }
-}

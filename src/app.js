@@ -4,6 +4,8 @@ import { config } from "dotenv"
 import router from "./routes/users.routes.js"
 import rolesRoutes from "./routes/roles.routes.js"
 import notiRoutes from "./routes/notificaciones.routes.js"
+import cenRoutes from "./routes/centros.routes.js"
+import aprRoutes from './routes/aprendices.routes.js'
 
 const app = express()
 const port = process.env.PORT || 3000;
@@ -31,6 +33,8 @@ app.use(express.json());
 app.use('/api', router);
 app.use('/api', rolesRoutes);
 app.use('/api', notiRoutes);
+app.use('/api', cenRoutes);
+app.use('/api', aprRoutes)
 
 // si la ruta no existe
 app.use((req, res, next)=>{

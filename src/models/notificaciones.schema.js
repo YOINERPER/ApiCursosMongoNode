@@ -28,4 +28,6 @@ const notiSchema = mongoose.Schema({
     }
 })
 
+
+
 export default mongoose.model('Notificaciones_Usuarios', notiSchema)

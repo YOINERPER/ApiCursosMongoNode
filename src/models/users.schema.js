@@ -46,6 +46,11 @@ const userSchema = mongoose.Schema({
     Not_User: {
         type: [Schema.ObjectId],
         ref: 'Notificaciones_Usuarios'
+    },
+    Id_Apr:{
+        type:Schema.ObjectId,
+        ref: "aprendices",
+        default: null
     }
 })
 
