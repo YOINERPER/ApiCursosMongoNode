@@ -6,6 +6,9 @@ import rolesRoutes from "./routes/roles.routes.js"
 import notiRoutes from "./routes/notificaciones.routes.js"
 import cenRoutes from "./routes/centros.routes.js"
 import aprRoutes from './routes/aprendices.routes.js'
+import routesCat from "./routes/categorias.routes.js";
+import curRoutes from "./routes/cursos.routes.js";
+
 
 const app = express()
 const port = process.env.PORT || 3000;
@@ -35,6 +38,8 @@ app.use('/api', rolesRoutes);
 app.use('/api', notiRoutes);
 app.use('/api', cenRoutes);
 app.use('/api', aprRoutes)
+app.use('/api', routesCat)
+app.use('/api', curRoutes)
 
 // si la ruta no existe
 app.use((req, res, next)=>{

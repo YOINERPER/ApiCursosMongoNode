@@ -8,7 +8,7 @@ import { mensajeEnviar } from "../mails/Emailmessages/verification.message.js"
 export const getAllUsers = async (req, res) => {
     try {
         const user = await userSchema.find()
-            .populate('Rol_User_Fk')
+            .populate('Rol_User_Fk', 'Nom_Rol')
             .populate('Id_Apr')
             .exec();
         res.status(200).json(user)
@@ -96,15 +96,15 @@ export const AddUser = async (req, res) => {
         // Convierte el campo Rol_User_Fk en un ObjectId
         let rol;
         let rolObjectId;
-        if (Rol_User_Fk === "1") {
+        if (Rol_User_Fk === 1) {
             rol = "6528b9ba022cedd0cb70b310"
             rolObjectId = new mongoose.Types.ObjectId(rol);
-        } else if (Rol_User_Fk === "2") {
+        } else if (Rol_User_Fk === 2) {
 
             rol = "6528b9cd022cedd0cb70b312"
             rolObjectId = new mongoose.Types.ObjectId(rol);
 
-        } else if (Rol_User_Fk === "3") {
+        } else if (Rol_User_Fk === 3) {
             rol = "6528b9d6022cedd0cb70b314"
             rolObjectId = new mongoose.Types.ObjectId(rol);
 
