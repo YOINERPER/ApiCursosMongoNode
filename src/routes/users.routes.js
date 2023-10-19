@@ -1,5 +1,5 @@
 import { Router } from "express"
-import {getAllUsers, AddUser, UpdateUser, DeleteUser, getUser, loginV, getUserNot} from "../controllers/users.controller.js"
+import {getAllUsers, AddUser, UpdateUser, DeleteUser, getUser, loginV, getUserNot, addInsc} from "../controllers/users.controller.js"
 
 const router = Router();
 
@@ -27,3 +27,5 @@ export default router;
 
 //get user's notifications
 router.get('/users/notifications/:id', getUserNot)
+
+router.post('/users/inscripciones', addInsc)

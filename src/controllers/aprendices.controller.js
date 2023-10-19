@@ -3,6 +3,25 @@ import centrosSchema from "../models/centros.schema.js";
 import userSchema from "../models/users.schema.js"
 import shortid from "shortid";
 
+
+//get all learners
+
+export const getApr =async(req, res)=>{
+    try{
+
+        const data = await aprendicesSchema.find().populate("user_Apr", "Id_User Nom_User").exec();
+        res.status(200).json({
+            data: data
+        })
+
+    }catch(error){
+        res.status(500).json({
+            data:-2
+        })
+    }
+}
+
+
 //add aprendiz
 
 export const addAprendiz = async (req, res) => {
@@ -147,6 +166,44 @@ export const updtApr = async (req, res) => {
     }
 
 }
+
+//delete learners
+
+export const delApr = async (req, res)=>{
+    const {id} = req.params
+
+    // verificamos que exista el id
+    const aprendiz = await aprendicesSchema.findOne({"Id_Apr": id})
+
+    if(!aprendiz){
+        return res.status(500).json({
+            data: -3
+        })
+    }
+
+    await aprendicesSchema.deleteOne({"_id": aprendiz._id})
+    .then(async ()=>{
+        res.status(200).json({
+            data:1
+        })
+        console.log(aprendiz.user_Apr)
+        //eliminamos los id relacionados con usuarios
+        await userSchema.updateMany({"_id": aprendiz.user_Apr}, {$set:{"Id_Apr":null}})
+        .then((data)=>console.log(data)).catch((error)=>console.log(error))
+
+        //eliminamos los id relacionados con centros
+        await centrosSchema.updateMany({"List_Apr": aprendiz._id},{$pull:{"List_Apr": aprendiz._id}})
+        .then((data)=>console.log(data)).catch((error)=>console.log(error))
+
+    }).catch((error)=>{
+        res.status(500).json({
+            error: error.message,
+            data:-13
+        })
+    })
+
+}
+
 
 const verificarId = async (id) => {
 

@@ -7,7 +7,10 @@ import cursosSchema from "../models/cursos.schema.js";
 export const getCursos = async (req, res)=>{
     try{
 
-        const data = await cursosSchema.find().populate('Id_Cat_FK', "Nom_Cat").exec();
+        const data = await cursosSchema.find()
+        .populate('Id_Cat_FK', "Id_Cat Nom_Cat")
+        .populate('list_Users', "Id_User Nom_User")
+        .exec();
         res.status(200).json({
             data: data
         })
@@ -52,6 +55,7 @@ export const addCurso = async (req, res)=>{
             Id_Curso : datos.Id_Curso,
             Nom_Curso: datos.Nom_Curso,
             Des_Curso: datos.Des_Curso,
+            Img_Curso:datos.Img_Curso,
             Id_Cat_FK:categoria._id
         }
         

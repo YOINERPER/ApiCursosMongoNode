@@ -13,10 +13,18 @@ const cursoSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    Img_Curso:{
+        type: String,
+        required: true
+    },
     Id_Cat_FK:{
         type:Schema.ObjectId,
         required: true,
         ref: "categorias"
+    },
+    list_Users:{
+        type:[Schema.ObjectId],
+        ref:"Usuarios"
     }
 })
 

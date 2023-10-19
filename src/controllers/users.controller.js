@@ -3,13 +3,15 @@ import mongoose, { Schema } from "mongoose"
 import bcrypt from "bcrypt"
 import rolesSchema from "../models/roles.schema.js"
 import { mensajeEnviar } from "../mails/Emailmessages/verification.message.js"
+import cursosSchema from "../models/cursos.schema.js"
 
 //get all users
 export const getAllUsers = async (req, res) => {
     try {
         const user = await userSchema.find()
             .populate('Rol_User_Fk', 'Nom_Rol')
-            .populate('Id_Apr')
+            .populate('Id_Apr', 'Id_Apr Fic_Apr')
+            .populate('list_Cursos','Id_Curso Nom_Curso' )
             .exec();
         res.status(200).json(user)
     } catch (error) {
@@ -45,9 +47,6 @@ export const getUser = async (req, res) => {
     }
 }
 
-
-
-
 //add new users ========================================= 
 export const AddUser = async (req, res) => {
     try {
@@ -57,7 +56,6 @@ export const AddUser = async (req, res) => {
             Ape_User,
             Tel_User,
             Ema_User,
-            Dir_User,
             Pass_User,
             Fot_Per_User,
             Rol_User_Fk,
@@ -136,7 +134,6 @@ export const AddUser = async (req, res) => {
             Ape_User,
             Tel_User,
             Ema_User,
-            Dir_User,
             Pass_User: newPass,
             Fot_Per_User,
             Rol_User_Fk: rol,
@@ -216,7 +213,6 @@ export const UpdateUser = async (req, res) => {
              Ape_User: datos.Ape_User || user.Ape_User,
              Tel_User: datos.Tel_User || user.Tel_User,
              Ema_User: datos.Ema_User || user.Ema_User,
-             Dir_User : datos.Dir_User || user.Dir_User,
              Pass_User: newPass,
              Fot_Per_User: datos.Fot_Per_User || user.Fot_Per_User,
              Rol_User_Fk : datos.Rol_User_Fk || user.Rol_User_Fk,
@@ -319,6 +315,7 @@ const verificaPass = async (Pass_User, userEmail, res) => {
     }
 }
 
+//get notifications by users
 export const getUserNot = async (req, res) => {
     try {
         const { id } = req.params;
@@ -333,4 +330,73 @@ export const getUserNot = async (req, res) => {
             data: -6
         })
     }
+}
+
+//add inscriptions to course
+export const addInsc = async (req, res)=>{
+
+    try{
+        const datos = req.body;
+
+        // verificamos que el user exista
+        const user = await userSchema.findOne({"Id_User": datos.Id_User})
+        if(!user){
+            return res.status(500).json({
+                message: "user not found",
+                data: -1
+            })
+        }
+      
+        // verificamos que el curso exista
+
+        const curso = await cursosSchema.findOne({"Id_Curso": datos.Id_Curso})
+        if(!curso){
+            return res.status(500).json({
+                message: "Course not found",
+                data: -16
+            })
+        }else{
+            
+        }
+
+        //verificamos que no exista la inscripcion
+        const {list_Cursos} = user
+       
+        for (const cursoId of list_Cursos) {
+            if (cursoId.equals(curso._id)) {
+                return res.status(500).json({
+                    message: "User is already registered in this course",
+                    data: -17,
+                })
+               
+            }
+        }
+        
+
+        //agregamos el curso a la lista de cursos del usuario
+        await userSchema.updateOne({"_id": user._id}, {$push:{"list_Cursos":curso._id}})
+        .catch(error=> res.status(500).json({
+            error: error.message,
+            data: -5
+        }))
+        //agregamos el curso a la lista de cursos del usuario
+        await cursosSchema.updateOne({"_id": curso._id}, {$push:{"list_Users":user._id}})
+        .catch(error=> res.status(500).json({
+            error: error.message,
+            data: -5
+        }))
+
+        res.status(200).json({
+            data: 1
+        })
+        
+
+    }catch(error){
+        res.status(500).json({
+            error: error.message,
+            data: -6
+        })
+    }
+
+
 }

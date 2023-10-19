@@ -22,10 +22,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    Dir_User: {
-        type: String,
-        required: true,
-    },
+    
     Pass_User: {
         type: String,
         required: true,
@@ -51,6 +48,10 @@ const userSchema = mongoose.Schema({
         type:Schema.ObjectId,
         ref: "aprendices",
         default: null
+    },
+    list_Cursos:{
+        type: [Schema.ObjectId],
+        ref: "Cursos"
     }
 })
 
